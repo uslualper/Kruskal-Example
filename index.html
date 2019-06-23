@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Kümeleme Programı</title>
+    
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+ <script defer src="/__/firebase/5.8.3/firebase-app.js"></script>
+</head>
+
+<body>
+
+    <div id="wrapper" class="active">
+        <div id="sidebar-wrapper">
+            <ul id="sidebar_menu" class="sidebar-nav">
+                <li class="sidebar-brand"><a href="#"><i class="fa fa-terminal"></i> Kümeleme Programı </a></li>
+            </ul>
+            <ul class="sidebar-nav" id="sidebar">
+
+                <div class="option-area">
+                    <div class="option">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Adet</span>
+                            </div>
+                            <input id="rand-input" type="number" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+                        </div>
+                        <button id="random-circle" type="button" class="btn btn-warning btn-block">Rasgele Nokta Ekle</button>
+                    </div>
+                    <div class="option">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Küme Sayısı</span>
+                            </div>
+                            <input id="input-mean" type="number" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+                        </div>
+                        <button id="run-kmean" onclick="setup()" type="button" class="btn btn-success btn-lg btn-block">Çalıştır</button>
+                    </div>
+                    <div class="option">
+                        <div id="console" class="console">
+                            <h5> İstatistikler</h5>
+
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+
+            </ul>
+        </div>
+
+        <div id="page-content-wrapper">
+            <nav class="navbar navbar-expand navbar-dark bg-dark">
+                <a id="menu-toggle" href="#" class="navbar-brand"></a>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <a href="#" class="nav-item active nav-link">Çizim Alanı</a>
+                        <a href="#" class="nav-item active nav-link"> -> <span style="color:orange"> Ekle </span> : Tek Tıklama</a>
+                        <a href="#" class="nav-item active nav-link"> -> <span style="color:orange"> Sil </span> : Çift Tıklama</a>
+                        <a href="#" class="nav item active nav-link"> -> <span style="color:orange"> Taşı </span> : Üstüne Basılı Tutarak Çek</a>
+
+                    </ul>
+
+                    <div class="form-inline my-2 mylg-0">
+                        <button id="paint-clear" class="btn btn-outline-danger">Çizimi Temizle</button>
+                    </div>
+                </div>
+            </nav>
+            <div class="page-content inset">
+                <div class="row">
+                    <div class="col-md-12">
+
+                        <div id="paint">
+                            <div id="paint-area"></div>
+                            <canvas id="canvas" height="500" width="900"></canvas>
+
+                        </div>
+
+
+                        
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="lib/heap.js"></script>
+    <script type="text/javascript" src="lib/kmean.js"></script>
+    <script>
+        $(document).ready(function() {
+      
+            $('#paint-area').click(function(e) { //Nokta ekleme
+                var posX = e.offsetX - 8;
+                var posY = 500 - e.offsetY - 8;
+
+                setTimeout(function() {
+                    var el = $('#paint').append('<div class="circle" style="left:' + posX + 'px;bottom:' + posY + 'px"></div>').children("div:last-child");;
+                    $(el).draggable({
+                        containment: "#paint"
+                    });
+                    //console.log(el);
+                }, 100);
+
+
+            });
+            $('#paint-clear').click(function(e) { //Çizimi Temizle                
+                $('#paint .circle').remove();
+            });
+
+
+            $('#random-circle').click(function(e) { //Random Nokta Ekleme
+
+                var count = $('#rand-input').val();
+                if (count > 1000) {
+                    alert('Girilen Sayı En Fazla 1000 Olabilir');
+                    return false;
+                } else if (count < 1) {
+                    alert("Sayı 1'den Az Olamaz");
+                    return false;
+                } else if (!count) {
+                    alert("Sayı Giriniz");
+                    return false;
+                }
+                for (i = 0; i < count; i++) {
+
+                    var randX = Math.floor((Math.random() * 870) + 1);
+                    var randY = Math.floor((Math.random() * 470) + 1);
+
+                    var el = $('#paint').append('<div class="circle" style="left:' + randX + 'px;bottom:' + randY + 'px"></div>').children("div:last-child");;
+                    $(el).draggable({
+                        containment: "#paint"
+                    });
+
+                }
+
+            });
+
+            $(document).on('dblclick', '.circle', function(e) {
+                $(this).remove();
+            });
+
+        });
+
+    </script>
+</body>
+
+</html>
